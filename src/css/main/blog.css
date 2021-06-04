@@ -1,0 +1,22 @@
+.blog-container{
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: white;
+    box-sizing: content-box;
+    padding: 1.875rem;
+}
+
+.blog-container h1{
+    font-weight: 500;
+    font-size: 2rem;
+    cursor: pointer;
+    margin-bottom: 1rem;
+}
+
+.blog-content{
+    line-height: 1.6;
+    margin-bottom: 1.31rem;
+}

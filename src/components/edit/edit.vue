@@ -95,9 +95,11 @@
     </div>
 </template>
 
-<script>
-import '../../css/new.css';
+<style scoped src="../../css/edit/edit.css">
 
+</style>
+
+<script>
 let converter = new showdown.Converter();
 
 export default {

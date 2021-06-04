@@ -69,7 +69,7 @@ module.exports = {
     //npm install --save-dev html-webpack-plugin
     //HTMLWebpackPlugin创建了一个全新的文件，所有的bundle都会自动添加到html中
     new HtmlWebpackPlugin({
-      title:'Development',
+      title:'思享coding',
       template:'./src/index.html'
     }),
     new VueLoaderPlugin(),

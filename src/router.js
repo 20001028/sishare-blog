@@ -3,16 +3,16 @@ export default new VueRouter({
     routes:[
         {
             path:'/',
-            redirect:'/articles',
+            redirect:'/blogs',
             component:() => import('./components/common/index.vue'),
             children:[
                 {
-                    path:'articles',
-                    component:() => import('./components/main/article-list.vue')
+                    path:'blogs',
+                    component:() => import('./components/main/blog-list.vue')
                 },
                 {
-                    path:'articles/:id',
-                    component:()=>import('./components/main/article.vue'),
+                    path:'blogs/:id',
+                    component:()=>import('./components/main/blog.vue'),
                     props:true
                 },
                 {
@@ -22,9 +22,9 @@ export default new VueRouter({
             ]
         },
         {
-            path:'/write',
-            name:'write',
-            component:()=>import('./components/write/new.vue')
+            path:'/edit',
+            name:'edit',
+            component:()=>import('./components/edit/edit.vue')
         }
     ]
 })

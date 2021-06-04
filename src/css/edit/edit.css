@@ -94,6 +94,7 @@
     display: flex;
     width: 100%;
     margin-top: -0.25rem;
+    flex-wrap: wrap;
 }
 
 .article-subjects > a{
@@ -107,12 +108,8 @@
     cursor: pointer;
 }
 
-.article-subjects > a:first-child{
+.article-subjects > a{
     margin-left: 2.5rem;
-}
-
-.article-subjects > a:not(:first-child){
-    margin-left: 0.5rem;
 }
 
 .editor-md-container{
@@ -212,20 +209,21 @@
 .my-subjects,.all-subjects{
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-around;
     margin-bottom: 2rem;
 }
 
 .sub-item{
     position: relative;
     display: flex;
-    min-width: 6rem;
     border: 1px solid rgb(231, 213, 213);
     padding: 0% 0.5rem;
+    padding-right: 1.5rem;
+    height: 2rem;
     border-radius: 0.25rem;
     text-align: center;
     margin-top: 1rem;
     cursor: pointer;
+    margin-left: 1rem;
 }
 
 .subjects-container .sub-item:hover .subject-delete{

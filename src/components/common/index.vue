@@ -1,12 +1,14 @@
 <template>
     <div class="index-container">
-        <div class="nav-container">
-            <NavBar @login="loginForm"/>
+        <div class="header-container">
+            <Header @login="showLoginForm"/>
         </div>
         
- 
         <div class="router-container">
             <router-view></router-view>
+        </div>
+        <div class="footer-container">
+            <Footer />
         </div>
         <el-dialog
                 title="登录"
@@ -34,13 +36,12 @@
 </template>
  
 <script>
-import NavBar from '../common/nav-bar.vue';
-//const NavBar=()=>import('../common/nav-bar.vue');
+const Header=()=>import('./header.vue');
+const Footer=()=>import('./footer.vue')
 
 export default {
     data(){
         return {
-            name:'zzg',
             loginDialog:{
                 visible:false,
                 username:'',
@@ -49,10 +50,11 @@ export default {
         }
     },
     components:{
-        NavBar
+        Header,
+        Footer
     },
     methods:{
-        loginForm(){
+        showLoginForm(){
             this.loginDialog.visible=true;
         },
         login(){
@@ -73,25 +75,6 @@ export default {
 }
 </script>
  
-<style scoped>
-.nav-container{
-    position: sticky;
-    top: 0%;
-    display: flex;
-    width: 100%;
-    height: 41.2px;
-    background-color: white;
-    color: #252129;
-    padding: 8px 0px;
-    border-top: 2px solid #00965e;
-    box-sizing: content-box;
-    justify-content: center;
-    box-shadow: 0 .125rem .25rem rgba(0,0,0,.075)!important;
-}
+<style scoped src="../../css/common/index.css">
 
-.router-container{
-    padding-top: 20px;
-    min-height: 1000px;
-    background-color: #e9ecef;
-}
 </style>

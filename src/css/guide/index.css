@@ -7,8 +7,8 @@
     display: flex;
     flex-direction: column;
     position: fixed;
-    margin-top: 0;
-    width: 20rem;
+    top: 4rem;
+    width: 20%;
     background-color: white;
     color: white;
     height: auto;
@@ -62,10 +62,10 @@
 }
 
 .article-container{
-    margin-left: 20rem;
+    margin-left: 20%;
     background-color: white;
     width: 60rem;
-    padding: 1rem 4rem;
+    padding: 4rem 8rem;
     overflow-y: auto;
     flex-grow: 1;
 }

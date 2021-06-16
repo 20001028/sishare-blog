@@ -1,5 +1,5 @@
 <template>
-    <div class="guide-container" >
+    <div class="guide-container">
         <div class="left-list">
             <div class="left-list-item" v-for="item in itemList" :key="item.id">
                 <div class="item-head"  @click="show(item.id)">
@@ -25,7 +25,6 @@
 
 <script>
 import '../../css/guide/index.css';
-
 export default {
     data(){
         return {

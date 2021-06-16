@@ -1,114 +1,77 @@
 <template>
-    <div class="write-article-container">
-        <div class="write-head">
-            <a class="iconfont icon-qianyitian" @click="goToIndex">
+    <div class="edit-blog-container">
+        <div class="edit-head">
+            <a class="iconfont icon-qianyitian" @click="$router.push({path:'/'})">
                 所有文章
             </a>
-            <a v-on:click="enter">
+            <a>
                 写文章
             </a>
-            <button class="iconfont icon-fabu" @click="launch" >
+            <button class="iconfont icon-fabu" @click="launchBlog" >
                 发布
             </button>
         </div>
-        <div class="article-title">
-            <input placeholder="输入标题" type="text" v-model="title"/>
+        <div class="blog-title">
+            <input id="blog-title" placeholder="输入标题" type="text" v-model="blog.title"/>
         </div>
-        <div class="article-subjects">
-            <a @click="openSubjectDialog" v-for="sub in blogSubjects" :key="sub.id">{{sub.name}}</a>
-            <a @click="openSubjectDialog">添加专题</a>
+        <div class="blog-subjects">
+            <a ref="subject" @click="subjectDialog.visible=true;"
+                v-for="sub in blog.subjects" :key="sub.id">{{sub.name}}</a>
+            <a @click="subjectDialog.visible=true;">添加专题</a>
         </div>
         <div class="editor-md-container">
-            <div class="editor-controls" @click="handle">
-                <el-popover
-                    placement="right"
-                    width="150"
-                    trigger="hover">
-                    <div class="head-group">
-                        <a>一级标题</a>
-                        <a>二级标题</a>
-                        <a>三级标题</a>
-                        <a>四级标题</a>
-                        <a>五级标题</a>
-                        <a>六级标题</a>
-                    </div>
-                    <a slot="reference" class="iconfont icon-biaoti"></a>
-                </el-popover>
-
-                <a class="iconfont icon-jiacu" style="font-size:14px;"></a>
-                <a class="iconfont icon-xieti"></a>
-                <a class="iconfont icon-dashujukeshihuaico-" style="font-size:18px;"></a>
-                <a class="iconfont icon-link1" @click="openLinkDialog('link')"></a>
-                <a class="iconfont icon-edui-for-blockquote"></a>
-                <a class="iconfont icon-tupian" style="font-size:20px;" @click="openLinkDialog('img')"></a>
-                <a class="iconfont icon-shipin" style="font-size:14px;"></a>
-                <a class="iconfont icon-biaoge" style="font-size:18px;"></a>
-                <a class="iconfont icon-gongshi" style="font-size:26px;"></a>
-                <a class="iconfont icon-youxuliebiao" style="font-size:18px;"></a>
-                <a class="iconfont icon-wuxuliebiao" style="font-size:18px;" title="无序列表"></a>
-                <a class="iconfont icon-fengexian" style="font-size:24px;" title="分割线"></a>
-                <a class="iconfont icon-bangzhu" style="font-size:20px;" title="帮助"></a>
+            <div class="editor-controls">
+                <el-popover-header @insert-header="insertHeader"></el-popover-header>
+                <a class="iconfont icon-jiacu" style="font-size:14px;" @click="emphasis"></a>
+                <a class="iconfont icon-xieti" @click="italics"></a>
+                <a class="iconfont icon-dashujukeshihuaico-" style="font-size:18px;" @click="codeBlock"></a>
+                <a class="iconfont icon-link1" @click="showLinkDialog('link')"></a>
+                <a class="iconfont icon-tupian" style="font-size:20px;" @click="showLinkDialog('img')"></a>
+                <a class="iconfont icon-youxuliebiao" style="font-size:18px;" @click="orderedList"></a>
+                <a class="iconfont icon-wuxuliebiao" style="font-size:18px;" @click="unorderedList"></a>
+                <el-popover-help></el-popover-help>
             </div>
             <div class="edit-container">
-                <textarea id="content" v-model="content" @input="setMarkDown" placeholder="赶快开始你的学习吧" @keydown="enter" @scroll="onscroll"></textarea>
+                <textarea id="content" v-model="blog.source" 
+                    @input="setMarkdown"
+                    placeholder="赶快开始你的学习吧" @keydown="enterKey" @scroll="onscroll"></textarea>
             </div>
-            <div id="preview" class="preview-container" v-html="preHtml" v-highlight>
+            <div id="preview" class="preview-container" v-html="blog.preHtml" v-highlight>
             </div>
         </div>
-        <el-dialog
-            :title="linkDialog.title"
-            :visible.sync="linkDialog.visible"
-            width="50%">
-            <el-input placeholder="请输入内容" v-model="linkDialog.text">
-                <template slot="prepend">alt</template>
-            </el-input>
-            <p style="width=30px;height:10px;visibility:hidden;"></p>
-            <el-input placeholder="请输入链接地址" v-model="linkDialog.href">
-                <template slot="prepend">link</template>
-            </el-input>
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="linkDialog.visible = false">取 消</el-button>
-                <el-button type="primary" @click="addLink">确 定</el-button>
-            </span>
-        </el-dialog>
-        <el-dialog
-            :title="subjectDialog.title"
-            :visible.sync="subjectDialog.visible"
-            width="50%">
-            <div class="subjects-container">
-                <a>所有专题</a>
-                <div class="all-subjects">
-                    <div v-for="sub in allSubjects" :key="sub.id" class="sub-item">
-                        <a @click="addSubToBlog(sub.id)">{{sub.name}}</a>
-                        <a class="subject-delete iconfont icon-shanchu"></a>
-                    </div>
-                </div>
-                <a>我的专题(至少添加一个)</a>
-                <div class="my-subjects">
-                    <div v-for="sub in blogSubjects" :key="sub.id" class="sub-item">
-                        <a>{{sub.name}}</a>
-                        <a class="subject-delete iconfont icon-shanchu" @click="deleteSubFromBlog(sub.id)"></a>
-                    </div>
-                </div>
-            </div>
-        </el-dialog>
+        <el-dialog-link ref="link" :linkDialog="linkDialog" :handleTextarea="handleTextarea" @click="test" :blog="blog"></el-dialog-link>
+        <el-dialog-subject :subjectDialog="subjectDialog" :blogSubjects="blog.subjects"></el-dialog-subject>
     </div>
 </template>
 
-<style scoped src="../../css/edit/edit.css">
-
-</style>
-
 <script>
 let converter = new showdown.Converter();
+let ElPopoverHeader=()=>import('./el-popover-header.vue');
+let ElPopoverHelp=()=>import('./el-popover-help.vue');
+let ElDialogLink=()=>import('./el-dialog-link.vue');
+let ElDialogSubject=()=>import('./el-dialog-subject.vue');
 
 export default {
+    components:{
+        ElPopoverHeader,
+        ElPopoverHelp,
+        ElDialogLink,
+        ElDialogSubject
+    },
+    provide:function(){
+        return{
+            blog:this.blog
+        }
+    },
     data(){
         return{
-            top:'12px',
-            content:'',
-            preHtml:"",
-            title:'',
+            blog:{
+                id:'',
+                source:'',
+                preHtml:'',
+                title:'',
+                subjects:[]
+            },
             linkDialog:{//插入链接的Dialog
                 title:'插入链接',
                 text:'',
@@ -120,206 +83,203 @@ export default {
                 title:'专题管理',
                 visible:false,
             },
-            allSubjects:[],
-            blogSubjects:[]
+            intervarl:null
         }
     },
-    created(){
-        let that=this;
-        //判断是修改还是新文章
-        if(that.$route.query.type==='edit'){
+    async created(){
+        //this.$refs.link.linkDialog.visible=true;
+        console.log(this.$refs.link)
+        if(this.$route.query.type==='edit'){
+            this.blog.id=this.$route.query.id;
+            await this.getBlogById();
+            await this.getSubjectByBlogId();
+            if(!this.intervarl){
+                this.intervarl=setInterval(()=>{
+                    this.updateBlog();
+                    let date=new Date();
+                    this.$notify({
+                        title: date.toTimeString(),
+                        message: '已为您自动保存',
+                        type: 'success',
+                        duration:1000
+                    });
+                },1000*10);
+            }
+        }else{
+            this.blog.id=this.getUuid();
+            if(!this.intervarl){
+                this.intervarl=setInterval(()=>{
+                    sessionStorage.setItem(this.blog.id,JSON.stringify(this.blog));
+                    let date=new Date();
+                    this.$notify({
+                        title: date.toTimeString(),
+                        message: '已为您自动保存',
+                        type: 'success',
+                        duration:1000
+                    });
+                },1000*10);
+            }
+        }
+    },
+    mounted(){
+        // window.onbeforeunload=e=>{
+        //     console.log('dsdsd')
+        //     alert('leave')
+        //     return
+        // }
+    },
+    methods:{
+        test(){
+            console.log(this.linkDialog);
+        },
+        setMarkdown(){
+            this.blog.preHtml=converter.makeHtml(this.blog.source);
+        },
+        getUuid(){
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                var r = Math.random() * 16 | 0,
+                v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        },
+        autoSave(){
+
+        },
+        handleTextarea(insert){
+            let textarea=document.getElementById('content');
+            let startPos=textarea.selectionStart;
+            // let scrollTop=textarea.scrollTop;
+            let value=textarea.value;//取出当前文本域内的值
+            insert(textarea,startPos,value);
+            // if(textarea.scrollTop>0)
+            //     textarea.scrollTop=scrollTop;
+            textarea.focus();
+            this.blog.source=textarea.value;//更新content
+            this.setMarkdown();
+        },
+        insertHeader(index){
+            let insert=new Array(index+2).fill('#').join('');
+            let method=(textarea,startPos,value)=>{
+                textarea.value=value.substring(0,startPos)+'\n'
+                +insert+value.substring(startPos,value.length);
+            };
+            this.handleTextarea(method);
+        },
+        emphasis(){
+            let method=(textarea,startPos,value)=>{
+                let endPos=textarea.selectionEnd;
+                textarea.value=value.substring(0,startPos)+'**'+value.substring(startPos,endPos)
+                +'**'+value.substring(endPos,value.length);
+            };
+            this.handleTextarea(method);
+        },
+        italics(){
+            let method=(textarea,startPos,value)=>{
+                let endPos=textarea.selectionEnd;
+                textarea.value=value.substring(0,startPos)+'*'+value.substring(startPos,endPos)
+                +'*'+value.substring(endPos,value.length);
+            };
+            this.handleTextarea(method);
+        },
+        codeBlock(){
+            let method=(textarea,startPos,value)=>{
+                let endPos=textarea.selectionEnd;
+                textarea.value=value.substring(0, startPos)
+                + '\n```\n'+value.substring(startPos,endPos)
+                +'\n```\n' + value.substring(endPos, value.length);
+            };
+            this.handleTextarea(method);
+        },
+        showLinkDialog(type){
+            this.linkDialog.visible=true;
+            this.linkDialog.type=type;
+            this.linkDialog.title=type==='link' ? '插入链接' : '插入图片';
+        },
+        orderedList(){
+            let method=(textarea,startPos,value)=>{
+                textarea.value=value.substring(0, startPos)
+                +'\n1. 第一项\n2. 第二项\n3. 第三项'+ value.substring(startPos, value.length);
+            }
+            this.handleTextarea(method);
+        },
+        unorderedList(){
+            let method=(textarea,startPos,value)=>{
+                textarea.value=value.substring(0, startPos)
+                +'\n+ 第一项\n+ 第二项\n+ 第三项'+ value.substring(startPos, value.length);
+            }
+            this.handleTextarea(method);
+        },
+        getBlogById(){
+            let that=this;
             //根据id请求数据并渲染标题、文本域和预览
             that.$axios({
                 method:'GET',
-                url:'http://42.192.180.142:3000/articles/'+that.$route.query.id,
+                url:'http://42.192.180.142:3000/blogs/'+that.$route.query.id,
             }).then((res)=>{
-                that.preHtml=res.data.html;
-                that.content=res.data.article.content;
-                that.title=res.data.article.title;
+                that.blog.preHtml=res.data.html;
+                that.blog.source=res.data.blog.content;
+                that.blog.title=res.data.blog.title;
             });
+        },
+        updateBlog(){
+            let that=this;
+            //更新文章
+            that.$axios({
+                method:'PUT',
+                url:'http://42.192.180.142:3000/blogs/'+that.blog.id,
+                data:that.blog
+            }).then((res)=>{
+                //跳转到查看页面
+                //this.$router.push({path:'/blogs/'+that.blog.id});
+            });
+        },
+        getSubjectByBlogId(){
+            let that=this;
             that.$axios({
                 method:'GET',
                 url:'http://42.192.180.142:3000/subjects/'+that.$route.query.id
             }).then((res)=>{
-                that.blogSubjects=res.data;
+                that.blog.subjects=res.data;
             });
-        };
-    },
-    mounted(){
-        //console.log(this.$route.query);
-    },
-    methods:{
-        addSubToBlog(id){
+        },
+        addBlog(){
             let that=this;
-            if(that.blogSubjects.length>=5)
-                return;
-            let filters=that.blogSubjects.filter(item=>item.id===id);
-            if(filters.length>0)
-                return;
-            that.blogSubjects.push(...that.allSubjects.filter(item=>item.id===id));
+            //新增文章
             that.$axios({
                 method:'POST',
-                url:'http://42.192.180.142:3000/blog-subs',
-                data:{
-                    blogId:that.$route.query.id,
-                    subId:id
-                }
+                url:'http://42.192.180.142:3000/blogs',
+                data:that.blog
             }).then((res)=>{
-                
+                //跳转到查看页面
+                this.$router.push({path:'/blogs/'+res.data.id});
             });
         },
-        deleteSubFromBlog(id){
-            let that=this;
-            that.blogSubjects=that.blogSubjects.filter(item=>item.id!==id);
-            that.$axios({
-                method:'DELETE',
-                url:'http://42.192.180.142:3000/subjects/'+that.$route.query.id+'/'+id,
-            }).then((res)=>{
-                console.log(res);
-            });
-        },
-        openSubjectDialog(){
-            let that=this;
-            that.$axios({
-                method:'GET',
-                url:'http://42.192.180.142:3000/subjects'
-            }).then((res)=>{
-                that.allSubjects=res.data;
-                that.subjectDialog.visible=true;
-            });
-            that.$axios({
-                method:'GET',
-                url:'http://42.192.180.142:3000/subjects/'+that.$route.query.id
-            }).then((res)=>{
-                that.blogSubjects=res.data;
-                that.subjectDialog.visible=true;
-            });
-        },
-        openLinkDialog(type){
-            this.linkDialog.type=type;
-            this.linkDialog.title=type==='img' ? '插入图片' : '插入链接';
-            this.linkDialog.visible=true;
-        },
-        addLink(){
-            //对话框“确定”按钮的监听函数
-            //将alt和link插入到文本域中
-            //获取文本域DOM节点
-            let textarea=document.getElementById('content');
-            //插入链接一般不管是否选中内容，我们都采用头插
-            let pos=textarea.selectionStart;
-            let value=textarea.value;//取出当前文本域内的值
-            let type=this.linkDialog.type==='link' ? '' : '!';//判断是链接还是图片
-            //插入链接格式
-            textarea.value=value.substring(0,pos)+type+'['+this.linkDialog.text+']'
-                +'('+this.linkDialog.href+')'+value.substring(pos,value.length);
-            this.content=textarea.value;//更新content
-            this.setMarkDown();//渲染Markdown
-            //关闭对话框
-            this.linkDialog.visible=false;
-            //将对话框内部内容清除，避免污染下次打开
-            this.linkDialog.text='';
-            this.linkDialog.href='';
-        },
-        handle(e){//事件代理
-            let index;
-            for(let i=0;i<e.target.parentNode.children.length;i++){
-                if(e.target.parentNode.children[i]===e.target){
-                    index=i;
-                    break;
-                }
-            }
-            let operations=['h','b','i','code','link','quote','img','video','table','gongshi','ol','ul','line','help'];
-            let text=document.getElementById('content');
-            //开始和结束指针
-            let startPos=text.selectionStart;
-            let endPos=text.selectionEnd;
-            let value=text.value;
-            if([0,1,2].includes(index)&&startPos===endPos)
+        launchBlog(){
+            if(this.blog.title.trim()===''){
+                document.getElementById('blog-title').focus();
                 return;
-            //保存scrollTop
-            let restoreTop = text.scrollTop;
-            switch(index){
-                case 0:
-                    text.value=value.substring(0, startPos) + '###'+text.value.substring(startPos,endPos)+ text.value.substring(endPos, text.value.length);
-                    break;
-                case 1:
-                    text.value=value.substring(0, startPos) + '**'+text.value.substring(startPos,endPos)+'**' + text.value.substring(endPos, text.value.length);
-                    break;
-                case 2:
-                    text.value=value.substring(0, startPos) + '*'+text.value.substring(startPos,endPos)+'*' + text.value.substring(endPos, text.value.length);
-                    break;
-                case 3:
-                    text.value=value.substring(0, startPos) + '\n```\n'+text.value.substring(startPos,endPos)+'\n```\n' + text.value.substring(endPos, text.value.length);
-                    break;
-                case 5:
-                    text.value=value.substring(0, startPos) + '>'+text.value.substring(startPos,endPos)+'' + text.value.substring(endPos, text.value.length);
-                    break;
-                case 10:
-                    text.value=value.substring(0, startPos) + '\n1. '+text.value.substring(startPos,endPos)+'' + text.value.substring(endPos, text.value.length);
-                    break;
-                case 11:
-                    text.value=value.substring(0, startPos) + '\n+ '+text.value.substring(startPos,endPos)+'' + text.value.substring(endPos, text.value.length);
-                    break;
             }
-            //text.value = value.substring(0, startPos) + '**'+text.value.substring(startPos,endPos)+'**' + text.value.substring(endPos, text.value.length);
-            if (restoreTop > 0)
-            {
-                text.scrollTop = restoreTop;
+            if(this.blog.subjects.length<1){
+                this.$message.error('请至少为您的Blog添加一个专题');
+                setTimeout(()=>{
+                    this.subjectDialog.visible=true;
+                },1000);
+                return;
             }
-            // text.focus();
-            // text.selectionStart= startPos + myValue.length;
-            // text.selectionEnd= startPos + myValue.length;
-            this.content=text.value;
-            this.setMarkDown();
-        },
-        setMarkDown(){
-            this.preHtml=converter.makeHtml(this.content);
-        },
-        goToIndex(){
-            this.$router.push({path:'/'})
-        },
-        launch(){
-            let that=this;
-            if(that.$route.query.type==='edit'){
-                //更新文章
-                that.$axios({
-                    method:'PUT',
-                    url:'http://42.192.180.142:3000/articles/'+that.$route.query.id,
-                    data:{
-                        html:that.preHtml,//存储在文件中
-                        title:that.title,
-                        content:that.content//存储在数据库中·
-                    }
-                }).then((res)=>{
-                    //跳转到查看页面
-                    this.$router.push({path:'/articles/'+that.$route.query.id});
-                });
+            if(this.$route.query.type==='edit'){
+                this.updateBlog();
             }
             else{
-                //新增文章
-                that.$axios({
-                    method:'POST',
-                    url:'http://42.192.180.142:3000/articles',
-                    data:{
-                        html:that.preHtml,//存储在文件中
-                        title:that.title,
-                        content:that.content//存储在数据库中·
-                    }
-                }).then((res)=>{
-                    //跳转到查看页面
-                    this.$router.push({path:'/articles/'+res.data.id});
-                });
+                this.addBlog();
             }
         },
-        enter(e){
-            let text=e.target;
-            let pos=text.selectionStart;
-            console.log(e);
+        enterKey(e){
+            let method=(textarea,startPos,value)=>{
+                textarea.value=value.substring(0,startPos)+'<br>\n'+value.substring(startPos,value.length);
+            }
             switch(e.key){
                 case 'enter':
-                    text.value=text.value.substring(0,pos)+'<br>\n'+text.substring(pos,text.value.length);
-                    this.content=text.value;
-                    this.setMarkDown();
+                    this.handleTextarea(method);
                     break
             }
         },
@@ -328,6 +288,14 @@ export default {
             let preview=document.getElementById('preview');
             preview.scrollTop=text.scrollTop/2;
         }
+    },
+    destroyed(){
+        if(this.intervarl)
+            clearInterval(this.intervarl);
     }
 }
 </script>
+
+<style scoped src="../../css/edit/edit.css">
+
+</style>

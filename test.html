@@ -1,33 +1,11 @@
-<canvas id="drawing" width="200" height="200">
-    A drawing of something
-</canvas>
-
-<script>
-let drawing=document.getElementById('drawing');
-if(drawing.getContext){
-    let context=drawing.getContext('2d');
-    
-    context.beginPath();
-    //画外圆
-    context.arc(100,100,99,0,2*Math.PI,false);
-    context.moveTo(194,100);
-    //画内圆
-    context.arc(100,100,94,0,2*Math.PI,false);
-    //画分针
-    context.moveTo(100,100);
-    context.lineTo(100,15);
-    //画时针
-    context.moveTo(100,100);
-    context.lineTo(35,100);
-    
-    context.stroke();
-    context.font='bold 14px Arial';
-    context.textAlign='center';
-    context.textBaseLine='middle';
-    context.fillText('12',100,20);
-    context.textAlign='start';
-    context.fillText('12',100,40);
-    context.textAlign='end';
-    context.fillText('12',100,60);
+<style>
+.box {
+  border: 1px solid #333333;
+  width: 200px;
+  height: 100px;
 }
-</script>
+</style>
+
+<div class="box">This box has a height and a width. This means that if there is too much content to be displayed within the assigned height, there will be an overflow situation. If overflow is set to hidden then any overflow will not be visible.</div>
+
+<p>This content is outside of the box.</p>

@@ -1,88 +1,79 @@
-.write-article-container{
+.edit-blog-container{
     display: flex;
     flex-direction: column;
     width: 100%;
 }
 
-.write-head{
-    position: sticky;
+.edit-head{
     display: flex;
     width: 100%;
-    height: 41.2px;
+    height: 3rem;
     background-color: white;
     color: #252129;
-    padding: 8px 0px;
-    border-top: 2px solid #00965e;
-    box-sizing: content-box;
-    justify-content: space-around;
+    padding: 0.2rem 2rem;
+    border-top: 1px solid #00965e;
+    box-sizing: border-box;
+    justify-content: space-between;
     box-shadow: 0 .125rem .25rem rgba(0,0,0,.075)!important;
 }
 
-.write-head a{
-    display: block;
+.edit-head a{
     color: rgba(0,0,0,.5);
-    padding-left: .75rem;
-    padding-right: .75rem;
     text-decoration: none;
-    font-weight: 700;
-    line-height: 24px;
-    height: 40px;
+    font-weight: 600;
+    line-height: 1.5rem;
     box-sizing: border-box;
-    padding: 8px 16px 8px 16px;
+    padding: 0.5rem 1rem;
     cursor: pointer;
     font-size: 1.25rem;
 }
 
-.write-head a:hover{
-    color: #004a2e;
+.edit-head a:hover{
+    color: #212529;
 }
 
-.write-head button{
-    width: 100px;
-    display: inline-block;
-    font-weight: 400;
-    color: #212529;
+.edit-head button{
+    width: 8rem;
+    font-weight: 500;
     text-align: center;
     vertical-align: middle;
     user-select: none;
     background-color: transparent;
-    border: 1px solid transparent;
+    border: 1px solid #00965e;
     padding: .375rem .75rem;
-    font-size: 1rem;
-    line-height: 1.5;
+    font-size: 1.1rem;
+    line-height: 1.5rem;
     border-radius: .25rem;
     color: #fff;
     background-color: #00965e;
-    border-color: #00965e;
     transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
-    margin-left: 20px;
     cursor: pointer;
 }
 
-.article-title{
+.blog-title{
     width: 100%;
+    padding: 0.75rem 2.5rem;
+    box-sizing: border-box;
 }
 
-.article-title input{
+.blog-title input{
+    display: block;
+    box-sizing: border-box;
     height: 2.5rem;
-    margin-left: 2.5rem;
-    width: 93%;
-    margin-top: 10px;
-    margin-bottom: 10px;
+    width: 100%;
+    padding-left: 1rem;
     font-size: 1rem;
-    font-weight: 400;
-    line-height: 1.5;
+    font-weight: 500;
+    line-height: 2.5rem;
     color: #495057;
     background-color: #fff;
     background-clip: padding-box;
     border: 1px solid #ced4da;
     border-radius: .25rem;
-    padding-left: 10px;
-    display: inline-block;
     transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 }
 
-.article-title input:focus{
+.blog-title input:focus{
     color: #495057;
     background-color: #fff;
     border-color: #00c97e;
@@ -90,15 +81,16 @@
     box-shadow: 0 .125rem .25rem rgba(0,0,0,.075)!important;
 }
 
-.article-subjects{
+.blog-subjects{
     display: flex;
     width: 100%;
     margin-top: -0.25rem;
     flex-wrap: wrap;
 }
 
-.article-subjects > a{
+.blog-subjects > a{
     height: 1.5rem;
+    margin-left: 2.5rem;
     border: 1px solid rgb(245, 238, 238);
     line-height: 1.5rem;
     font-size: 0.75rem;
@@ -108,10 +100,6 @@
     cursor: pointer;
 }
 
-.article-subjects > a{
-    margin-left: 2.5rem;
-}
-
 .editor-md-container{
     display: flex;
     position: absolute;
@@ -119,13 +107,14 @@
     width: 100%;
     background-color: #e9ecef;
     display: flex;
-    top: 10rem;
+    top: 9rem;
     bottom: 0%;
 }
+
 .head-group a{
     text-align: center;
     display: block;
-    line-height: 30px;
+    line-height: 2rem;
 }
 
 .head-group a:hover{
@@ -141,14 +130,13 @@
     flex-direction: column;
     box-sizing: border-box;
     font-weight: 700;
-    flex-grow: 0%;
 }
 
 .editor-controls a{
     display: inline-block;
     height: 2rem;
     width: 2.5rem;
-    margin-bottom: 4px;
+    margin-bottom: .25rem;
     text-align: center;
     font-size: 16px;
     opacity: 0.5;
@@ -156,26 +144,27 @@
 }
 
 .edit-container{
-    border: 1px solid #ced4da;
     width: 45%;
     top: 0%;
     bottom: 0%;
     background-color: white;
-    flex: auto;
+    flex: 1 1 auto;
 }
 
 .edit-container textarea{
     border: none;
     resize: vertical;
+    border: 1px solid #ced4da;
     width: 100%;
     height: 99%;
-    line-height: 24px;
-    font-size: 16px;
+    line-height: 1.5rem;
+    font-size: 1rem;
     font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace!important;
 }
 
 .edit-container textarea:focus{
-    outline: 0;
+    border-color: #00c97e;
+    outline: none;
 }
 
 .preview-container{
@@ -183,65 +172,10 @@
     border: 1px solid #ced4da;
     bottom: 0%;
     width: 45%;
-    margin-left: 3px;
     top: 0%;
-    bottom: 0%;
     background-color: white;
-    padding: 16px;
+    padding: 0.5rem 1rem;
     overflow-y: auto;
     word-break: break-all;
     font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace!important;
-}
-
-.subjects-container{
-    display: flex;
-    flex-direction: column;
-    font-size: 1rem;
-    line-height: 2rem;
-    color: #00c97e;
-}
-
-.subjects-container > a{
-    font-size: 1.25rem;
-    color: #004a2e;
-}
-
-.my-subjects,.all-subjects{
-    display: flex;
-    flex-wrap: wrap;
-    margin-bottom: 2rem;
-}
-
-.sub-item{
-    position: relative;
-    display: flex;
-    border: 1px solid rgb(231, 213, 213);
-    padding: 0% 0.5rem;
-    padding-right: 1.5rem;
-    height: 2rem;
-    border-radius: 0.25rem;
-    text-align: center;
-    margin-top: 1rem;
-    cursor: pointer;
-    margin-left: 1rem;
-}
-
-.subjects-container .sub-item:hover .subject-delete{
-    display: block;
-}
-
-.sub-item a:first-child{
-    justify-self: center;
-    min-width: 5rem;
-    text-align: center;
-}
-
-.sub-item .subject-delete{
-    position: absolute;
-    right: 0;
-    width: 1rem;
-    padding: 0% 0.25rem;
-    color: red;
-    display: none;
-    font-size: 1.25rem;
 }

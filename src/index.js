@@ -20,7 +20,7 @@ Vue.directive('highlight',function (el) {
 Vue.use(VueRouter);
 
 //把Vue实例挂载到节点上
-new Vue({
+let vm=new Vue({
   el:'#app',
   router,
   render:h=>h(App)

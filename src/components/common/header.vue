@@ -1,13 +1,13 @@
 <template>
     <div class="text-container">
         <div>
-            <img>
+            <img height="80px" src="http://www.uugai.com/logoa/ziphp/ziti_a.php?txt=%E6%80%9D%E4%BA%ABCode&txtfont=z206.ttf&minitxt=Si%20Share%20Code">
         </div>
-        <a @click="toMain">文章列表</a>
-        <a @click="toGuide">建站教程</a>
-        <a>网站作者</a>
-        <a>项目中心</a>
-        <input type="text" placeholder="搜索关键字">
+        <a @click="toMain">Blogs</a>
+        <a @click="toGuide">Guidelines</a>
+        <a>Author</a>
+        <a>Project Center</a>
+        <input type="text" placeholder="搜索关键字" style="margin-left:5rem;">
         <button class="iconfont icon-fabu" @click="launch">发布</button>
         <a @click="login">登录</a>
     </div>

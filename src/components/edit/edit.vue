@@ -67,10 +67,12 @@ export default {
         return{
             blog:{
                 id:'',
-                source:'',
                 preHtml:'',
-                title:'',
-                subjects:[]
+                reading:0,
+                source:'',
+                visible:true,
+                subjects:[],
+                title:''
             },
             linkDialog:{//插入链接的Dialog
                 title:'插入链接',
@@ -87,12 +89,11 @@ export default {
         }
     },
     async created(){
-        //this.$refs.link.linkDialog.visible=true;
-        console.log(this.$refs.link)
         if(this.$route.query.type==='edit'){
-            this.blog.id=this.$route.query.id;
-            await this.getBlogById();
-            await this.getSubjectByBlogId();
+            this.blog=await this.getBlogById();
+            this.$set(this.blog,'subjects',await this.getSubjectByBlogId());
+            console.log(this.blog)
+            //创建定时器，定时保存，会在destroyed时销毁
             if(!this.intervarl){
                 this.intervarl=setInterval(()=>{
                     this.updateBlog();
@@ -103,10 +104,10 @@ export default {
                         type: 'success',
                         duration:1000
                     });
-                },1000*10);
+                },1000*60);
             }
         }else{
-            this.blog.id=this.getUuid();
+            this.blog.id=this.getId();
             if(!this.intervarl){
                 this.intervarl=setInterval(()=>{
                     sessionStorage.setItem(this.blog.id,JSON.stringify(this.blog));
@@ -122,41 +123,33 @@ export default {
         }
     },
     mounted(){
-        // window.onbeforeunload=e=>{
-        //     console.log('dsdsd')
-        //     alert('leave')
-        //     return
-        // }
+        
     },
     methods:{
-        test(){
-            console.log(this.linkDialog);
-        },
+        // 把源代码转换为markdown格式
         setMarkdown(){
             this.blog.preHtml=converter.makeHtml(this.blog.source);
         },
-        getUuid(){
+        // 生成一个唯一id
+        getId(){
             return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
                 var r = Math.random() * 16 | 0,
                 v = c == 'x' ? r : (r & 0x3 | 0x8);
                 return v.toString(16);
             });
         },
-        autoSave(){
-
-        },
+        // 处理markdown编辑器
+        // 传入一个处理函数
         handleTextarea(insert){
             let textarea=document.getElementById('content');
             let startPos=textarea.selectionStart;
-            // let scrollTop=textarea.scrollTop;
             let value=textarea.value;//取出当前文本域内的值
             insert(textarea,startPos,value);
-            // if(textarea.scrollTop>0)
-            //     textarea.scrollTop=scrollTop;
             textarea.focus();
             this.blog.source=textarea.value;//更新content
             this.setMarkdown();
         },
+        // 标题h2-h5
         insertHeader(index){
             let insert=new Array(index+2).fill('#').join('');
             let method=(textarea,startPos,value)=>{
@@ -165,6 +158,7 @@ export default {
             };
             this.handleTextarea(method);
         },
+        // 加粗
         emphasis(){
             let method=(textarea,startPos,value)=>{
                 let endPos=textarea.selectionEnd;
@@ -173,6 +167,7 @@ export default {
             };
             this.handleTextarea(method);
         },
+        // 斜体
         italics(){
             let method=(textarea,startPos,value)=>{
                 let endPos=textarea.selectionEnd;
@@ -181,6 +176,7 @@ export default {
             };
             this.handleTextarea(method);
         },
+        // 代码块
         codeBlock(){
             let method=(textarea,startPos,value)=>{
                 let endPos=textarea.selectionEnd;
@@ -190,11 +186,13 @@ export default {
             };
             this.handleTextarea(method);
         },
+        // 打开链接对话框
         showLinkDialog(type){
             this.linkDialog.visible=true;
             this.linkDialog.type=type;
             this.linkDialog.title=type==='link' ? '插入链接' : '插入图片';
         },
+        // 有序列表
         orderedList(){
             let method=(textarea,startPos,value)=>{
                 textarea.value=value.substring(0, startPos)
@@ -202,6 +200,7 @@ export default {
             }
             this.handleTextarea(method);
         },
+        // 无序列表
         unorderedList(){
             let method=(textarea,startPos,value)=>{
                 textarea.value=value.substring(0, startPos)
@@ -209,16 +208,15 @@ export default {
             }
             this.handleTextarea(method);
         },
+        // 根据ID获取blog
         getBlogById(){
             let that=this;
             //根据id请求数据并渲染标题、文本域和预览
-            that.$axios({
+            return that.$axios({
                 method:'GET',
                 url:'http://42.192.180.142:3000/blogs/'+that.$route.query.id,
             }).then((res)=>{
-                that.blog.preHtml=res.data.html;
-                that.blog.source=res.data.blog.content;
-                that.blog.title=res.data.blog.title;
+                return res.data;
             });
         },
         updateBlog(){
@@ -235,11 +233,11 @@ export default {
         },
         getSubjectByBlogId(){
             let that=this;
-            that.$axios({
+            return that.$axios({
                 method:'GET',
                 url:'http://42.192.180.142:3000/subjects/'+that.$route.query.id
             }).then((res)=>{
-                that.blog.subjects=res.data;
+                return res.data;
             });
         },
         addBlog(){
@@ -251,12 +249,14 @@ export default {
                 data:that.blog
             }).then((res)=>{
                 //跳转到查看页面
-                this.$router.push({path:'/blogs/'+res.data.id});
+                
             });
         },
-        launchBlog(){
+        async launchBlog(){
+            console.log('ok')
             if(this.blog.title.trim()===''){
                 document.getElementById('blog-title').focus();
+                this.$message.error('不能缺少标题');
                 return;
             }
             if(this.blog.subjects.length<1){
@@ -272,6 +272,10 @@ export default {
             else{
                 this.addBlog();
             }
+            setTimeout(()=>{
+                this.$router.push({path:'/blogs/'+this.blog.id});
+            },100);
+            //this.$router.push({path:'/blogs/'+this.blog.id});
         },
         enterKey(e){
             let method=(textarea,startPos,value)=>{
@@ -289,7 +293,7 @@ export default {
             preview.scrollTop=text.scrollTop/2;
         }
     },
-    destroyed(){
+    beforeDestroy(){
         if(this.intervarl)
             clearInterval(this.intervarl);
     }

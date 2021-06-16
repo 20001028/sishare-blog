@@ -1,14 +1,6 @@
 <template>
     <div class="blog-container">
         <div class="blog-dirs">
-            <div class="dir-head">
-                <a><i>I</i></a>
-                <a><i>II</i></a>
-                <a><i>III</i></a>
-                <a><i>IV</i></a>
-                <a><i>V</i></a>
-                <a><i>VI</i></a>
-            </div>
             <a ref="header" :style="{'font-size':h.style.fontSize,'margin-left':h.style.marginLeft}" 
                 v-for="h in dirs" 
                 :key="h.text" 
@@ -18,7 +10,7 @@
             <h1 class="blog-title">
                 {{blog.title}}
             </h1>
-            <div class="blog-content" v-html="blog.content" v-highlight>
+            <div class="blog-content" v-html="blog.preHtml" v-highlight>
             </div>
         </div>
     </div>
@@ -36,42 +28,36 @@ export default {
             dirs:[],
             styles:[
                 {
-                    fontSize:'1.3rem',
+                    fontSize:'1.2rem',
                     marginLeft:'0%'
                 },
                 {
-                    fontSize:'1.2rem',
-                    marginLeft:'16%'
-                },
-                {
                     fontSize:'1.1rem',
-                    marginLeft:'32%'
+                    marginLeft:'12%'
                 },
                 {
                     fontSize:'1rem',
-                    marginLeft:'48%'
+                    marginLeft:'24%'
                 },
                 {
                     fontSize:'0.9rem',
-                    marginLeft:'64%'
+                    marginLeft:'36%'
                 },
                 {
                     fontSize:'0.8rem',
-                    marginLeft:'80%'
+                    marginLeft:'48%'
                 }
             ],
             baseUrl:'http://42.192.180.142:3000/blogs/'
         }
     },
     created:function(){
-        console.log(this.$refs)
         this.getBlogById(this.id);
     },
     methods:{
         getBlogById(id){
             this.getRequest(this.baseUrl+id,{},(res)=>{
-                this.blog.content=res.data.html;
-                this.blog.title=res.data.blog.title;
+                this.blog=res.data;
             },(reason)=>{
                 alert(reason);
             }).then(this.generateDirs);
@@ -82,12 +68,14 @@ export default {
                 if(headers[i].tagName.indexOf('H')===-1)
                     continue;
                 let level=parseInt(headers[i].tagName[1]);
+                console.log(level)
                 this.dirs.push({
                     text:headers[i].textContent,
-                    style:this.styles[level-1],
+                    style:this.styles[level-2],
                     node:headers[i]
                 });
             }
+            console.log(this.dirs)
         },
         getRequest(url,params,resolve,reject){
             return this.$axios({

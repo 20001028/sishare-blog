@@ -44,20 +44,22 @@ export default {
             });
         },
         addSubjectToBlog(subject){
-            if(!this.$route.query.id){
-                this.blogSubjects.push(subject);
+            let that=this;
+            if(that.blogSubjects.length>=5){
+                this.$message.error('不能超过5个');
                 return;
             }
-            let that=this;
-            if(that.blogSubjects.length>=5)
-                return;
+            // 如果已经有了，return
             let filters=that.blogSubjects.filter(item=>item.id===subject.id);
             if(filters.length>0)
                 return;
-            that.blogSubjects.push(...that.allSubjects.filter(item=>item.id===subject.id));
+            // 如果没有，push进去
+            that.blogSubjects.push(subject);
+            if(!this.$route.query.id)
+                return
             that.$axios({
                 method:'POST',
-                url:'http://42.192.180.142:3000/blog-subs',
+                url:'http://42.192.180.142:3000/blogs/blog-sub',
                 data:{
                     blogId:that.$route.query.id,
                     subId:subject.id
@@ -67,13 +69,11 @@ export default {
             });
         },
         deleteSubjectFromBlog(id){
+            let index=this.blogSubjects.find(item=>item.id===id);
+            this.blogSubjects.splice(index,1);
+            if(!this.$route.query.id)
+                return;
             let that=this;
-            let index=0;
-            that.blogSubjects.map((item,i)=>{
-                if(item.id===id)
-                    index=i;
-            });
-            that.blogSubjects.splice(index,1);
             that.$axios({
                 method:'DELETE',
                 url:'http://42.192.180.142:3000/subjects/'+that.$route.query.id+'/'+id,
